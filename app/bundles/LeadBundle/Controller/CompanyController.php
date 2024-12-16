@@ -132,7 +132,6 @@ class CompanyController extends FormController
             return $this->accessDenied();
         }
 
-        // set some permissions
         $permissions = $this->security->isGranted(
             [
                 'lead:leads:viewown',
@@ -820,6 +819,7 @@ class CompanyController extends FormController
         // set some permissions
         $permissions = $this->security->isGranted(
             [
+                'lead:leads:viewown',
                 'lead:leads:viewother',
                 'lead:leads:create',
                 'lead:leads:editother',
@@ -827,6 +827,11 @@ class CompanyController extends FormController
             ],
             'RETURN_ARRAY'
         );
+
+        if (!$permissions['lead:leads:viewown'] && !$permissions['lead:leads:viewother']) {
+            return $this->accessDenied();
+        }
+
         /** @var CompanyModel $model */
         $model            = $this->getModel('lead.company');
         $secondaryCompany = $model->getEntity($objectId);
@@ -853,7 +858,7 @@ class CompanyController extends FormController
                         'flashes' => [
                             [
                                 'type'    => 'error',
-                                'msg'     => 'mautic.lead.company.error.notfound',
+                                'msg'     => 'mautic.company.error.notfound',
                                 'msgVars' => ['%id%' => $objectId],
                             ],
                         ],
@@ -889,7 +894,7 @@ class CompanyController extends FormController
                                     'flashes' => [
                                         [
                                             'type'    => 'error',
-                                            'msg'     => 'mautic.lead.company.error.notfound',
+                                            'msg'     => 'mautic.company.error.notfound',
                                             'msgVars' => ['%id%' => $primaryCompany->getId()],
                                         ],
                                     ],
